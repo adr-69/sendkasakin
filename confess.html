@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Message</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .message-box {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 380px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 26px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            resize: none;
+            margin-bottom: 30px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #4CAF50;
+            background-color: #fff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .confirmation {
+            display: none;
+            background-color: #f8f8f8;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .confirmation p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .confirmation button {
+            padding: 12px;
+            background-color: #2196F3;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirmation button:hover {
+            background-color: #1e88e5;
+        }
+
+        .confirmation .cancel {
+            background-color: #f44336;
+        }
+
+        .confirmation .cancel:hover {
+            background-color: #e53935;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="message-box">
+        <h2>Send an Anonymous Message</h2>
+        <textarea id="message" placeholder="Enter your anonymous message..." required></textarea>
+        <button id="sendMessage">SEND!</button>
+
+        <!-- Confirmation Box -->
+        <div class="confirmation" id="confirmationBox">
+            <p>Your message has been sent successfully!</p>
+            <button id="sendAnother">SEND ANOTHER?</button>
+            <button class="cancel" id="closeConfirmation">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        // Grab DOM elements
+        const sendMessageBtn = document.getElementById("sendMessage");
+        const confirmationBox = document.getElementById("confirmationBox");
+        const sendAnotherBtn = document.getElementById("sendAnother");
+        const closeConfirmationBtn = document.getElementById("closeConfirmation");
+        const messageInput = document.getElementById("message");
+
+        const webhookUrl = "https://discord.com/api/webhooks/1308366015238770688/y6nRwYgtkYv9uXgfwAnGRWnwacl32ijqQbsBxNXYpeCiy5-TU-Womc-Jzbjk2Zii-mm0"; // Replace with your webhook URL
+
+        // Send message to Discord
+        sendMessageBtn.addEventListener("click", async function () {
+            const messageContent = messageInput.value.trim();
+            if (!messageContent) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            const message = {
+                content: `🔔 **Anonymous Message:**\n${messageContent}`,
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(message),
+                });
+
+                if (response.ok) {
+                    confirmationBox.style.display = 'block'; // Show confirmation box
+                    messageInput.value = ''; // Clear the message input
+                } else {
+                    alert("Failed to send the message.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while sending your message.");
+            }
+        });
+
+        // Handle "SEND ANOTHER?" action
+        sendAnotherBtn.addEventListener("click", function () {
+            messageInput.value = ''; // Clear message input for a new message
+            confirmationBox.style.display = 'none'; // Hide confirmation box
+        });
+
+        // Handle "CLOSE" action
+        closeConfirmationBtn.addEventListener("click", function () {
+            confirmationBox.style.display = 'none'; // Hide confirmation box
+        });
+    </script>
+
+</body>
+</html>
